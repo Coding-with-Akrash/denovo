@@ -1,0 +1,20 @@
+{
+  "created_date": "2025-11-12T15:00:16.288205",
+  "version": "1.0.0",
+  "description": "Protein Sequence Dataset Infrastructure",
+  "data_sources": {
+    "raw": "Raw protein sequence files (FASTA format)",
+    "processed": "Cleaned and preprocessed datasets",
+    "utils": "Dataset processing utilities"
+  },
+  "format_standards": {
+    "fasta": "Standard FASTA format with headers",
+    "csv": "CSV format with metadata columns",
+    "json": "JSON format for complex data structures"
+  },
+  "usage": {
+    "preprocessing": "Use datasets/utils/protein_preprocessor.py",
+    "custom_datasets": "Follow sample datasets format",
+    "quality_control": "All sequences validated for amino acid content"
+  }
+}

@@ -1,0 +1,12 @@
+3D Structure Description for GEN_0003_esmfold.pdb
+==================================================
+
+Note: Install py3Dmol for interactive 3D visualization
+
+PDB File: results\structures\GEN_0003_esmfold.pdb
+Generated: 2026-05-20 15:52:35
+
+To view this structure:
+1. Install py3Dmol: pip install py3Dmol
+2. Use protein structure visualization tools like PyMOL or ChimeraX
+3. Open the PDB file directly in molecular visualization software

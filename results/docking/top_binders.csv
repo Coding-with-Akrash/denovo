@@ -1,0 +1,2 @@
+ligand_id,target_id,docking_score,binding_energy,pose_file,rmsd,success
+GEN_0001_esmfold,1N8Z,-8.80769592803595,-8.80769592803595,results\docking\GEN_0001_esmfold_docking.pdbqt,2.4335609578399593,True

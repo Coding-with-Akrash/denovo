@@ -1,0 +1,89 @@
+{
+  "dataset_path": "datasets/processed/demo_dataset.fasta",
+  "training_results": {
+    "progan": {
+      "generated_sequences": [
+        "ARIFGFRTNGYAVFQW",
+        "NLAPPTPGAAKDPKCA",
+        "VANRAIKHATCCKALQ",
+        "DGFCYEALNALPLNHL",
+        "HRAHCVHNCAPSPACH"
+      ],
+      "training_history": {
+        "generator_loss": [
+          0.7076066434383392,
+          0.7253076732158661,
+          0.7265535891056061,
+          0.7318312525749207,
+          0.6994177103042603
+        ],
+        "discriminator_loss": [
+          0.6890510022640228,
+          0.7065699100494385,
+          0.6854699850082397,
+          0.7069811522960663,
+          0.6717894375324249
+        ],
+        "epoch": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    "vae": {
+      "generated_sequences": [
+        "MELAALCRWGLLLLALLPPGIASTQHKVRELTLQDVSVMGLNLIIIFVLMGVLGIGNFRIHTRIGLKTLE",
+        "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTNFYFNLSQNGVSYVN",
+        "MEFGLSWLLLPLLVDSSSLAGPDGDLDSLSPLHSVYVDQWDWEYRTYDIQGARDGNKLSSTSRRAAQK",
+        "MALVVLGLLLALLLGVVFSSATGSKLKVLSSPLHLSQAGELKSVSSVLSGSLSSSTGSSLQGSLSSQS",
+        "MKLFGLLALLPVLGAPLLASADGDLDSLSPLHSVYVDQWDWEYRTYDIQGARFNVGSDLLVAEGVSLD"
+      ],
+      "training_history": {
+        "total_loss": [
+          3.389891028404236,
+          3.631971836090088,
+          3.083988904953003,
+          2.790061831474304,
+          2.7176820039749146
+        ],
+        "reconstruction_loss": [
+          3.1090294122695923,
+          3.118404746055603,
+          2.7631969451904297,
+          2.6010780334472656,
+          2.605359196662903
+        ],
+        "kl_loss": [
+          28.086164474487305,
+          51.35670852661133,
+          32.07919692993164,
+          18.8983793258667,
+          11.232280254364014
+        ],
+        "epoch": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    }
+  },
+  "available_models": {
+    "progan": [
+      "demo_progan_pretrained_config"
+    ],
+    "generator": [],
+    "discriminator": [],
+    "vae": [
+      "demo_pretrained_config"
+    ],
+    "quality_predictor": [],
+    "classifier": []
+  },
+  "timestamp": "2025-11-11T15:20:00"
+}

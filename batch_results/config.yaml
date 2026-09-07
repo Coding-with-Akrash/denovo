@@ -1,0 +1,20 @@
+logging:
+  file: batch_results/pipeline.log
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  level: INFO
+model:
+  num_sequences: 5
+  training_epochs: 25
+  type: ProteinVAE
+paths:
+  data:
+    processed: data/processed
+    raw: data/raw
+  results:
+    reports: batch_results/reports
+    sequences: results/sequences
+    structures: results/structures
+project:
+  description: Protein design pipeline for Cancer therapy
+  name: AI Protein Design - EGFR
+  version: 1.0.0

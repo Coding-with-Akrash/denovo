@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Design Results - AI Protein Design</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .result-card h3 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metric {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .score-excellent { color: #00ff88; }
+        .score-good { color: #4ecdc4; }
+        .score-fair { color: #ffd93d; }
+        .score-poor { color: #ff6b6b; }
+
+        .sequences-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .sequence-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 3px solid #00d4ff;
+        }
+
+        .sequence-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .sequence-id {
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .sequence-properties {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .sequence-text {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            word-break: break-all;
+            font-size: 0.8em;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            min-height: 300px;
+        }
+
+        .recommendations {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .recommendations h3 {
+            color: #ffd93d;
+            margin-bottom: 15px;
+        }
+
+        .recommendation-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid #ffd93d;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .help-text {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metric-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧬 Protein Input Results</h1>
+            <p>Processing completed on {{ results.timestamp[:19] }}</p>
+        </div>
+
+        <!-- Input Summary Card -->
+        <div class="result-card">
+            <h3>📊 Input Summary</h3>
+            <div class="metric-grid">
+                <div class="metric">
+                    <div class="metric-value">{{ results.total_sequences }}</div>
+                    <div class="metric-label">Sequences Processed</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">{{ results.total_length }}</div>
+                    <div class="metric-label">Total Amino Acids</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">{{ results.uploaded_files|length }}</div>
+                    <div class="metric-label">Reference Files</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">{{ "%.1f"|format(results.total_length / results.total_sequences) if results.total_sequences > 0 else 0 }}</div>
+                    <div class="metric-label">Avg Length</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-grid">
+            <!-- Protein Data Overview -->
+            <div class="result-card">
+                <h3>🧬 Protein Information</h3>
+                <div class="metric-grid">
+                    <div class="metric">
+                        <div class="metric-value">{{ results.protein_data.protein_name or 'N/A' }}</div>
+                        <div class="metric-label">Protein Name</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">{{ results.protein_data.target_length or 'Auto' }}</div>
+                        <div class="metric-label">Target Length</div>
+                    </div>
+                </div>
+                {% if results.uploaded_files %}
+                <div class="sequences-section">
+                    <h4>📁 Uploaded Files:</h4>
+                    <ul>
+                        {% for file in results.uploaded_files %}
+                        <li>{{ file.split('/')[-1] }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Sequence Validation -->
+            <div class="result-card">
+                <h3>✅ Validation Results</h3>
+                <div class="metric-grid">
+                    <div class="metric">
+                        <div class="metric-value score-excellent">{{ results.sequences|length }}</div>
+                        <div class="metric-label">Valid Sequences</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value score-good">FASTA</div>
+                        <div class="metric-label">Format</div>
+                    </div>
+                </div>
+                <div class="sequences-section">
+                    <p><strong>✓ All sequences contain valid amino acids</strong></p>
+                    <p><strong>✓ FASTA format properly parsed</strong></p>
+                    <p><strong>✓ Ready for implementation</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Processed Sequences -->
+        <div class="result-card">
+            <h3>🧬 Processed Sequences</h3>
+            <div class="sequences-section">
+                {% if results.sequences %}
+                    {% for seq_data in results.sequences %}
+                        <div class="sequence-item">
+                            <div class="sequence-header">
+                                <span class="sequence-id">{{ seq_data.header or 'Sequence ' + loop.index|string }}</span>
+                                <span>Length: {{ seq_data.sequence|length }} aa</span>
+                            </div>
+                            <div class="sequence-properties">
+                                <span>Charge: {{ "%.1f"|format(seq_data.sequence|calculate_charge) }}</span>
+                                <span>Hydrophobicity: {{ "%.2f"|format(seq_data.sequence|calculate_hydrophobicity) }}</span>
+                                <span>MW: {{ "%.0f"|format(seq_data.sequence|calculate_mw) }}</span>
+                            </div>
+                            <div class="sequence-text">{{ seq_data.sequence }}</div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No sequences processed.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Implementation Status -->
+        <div class="recommendations">
+            <h3>🚀 Implementation Status</h3>
+            <div class="recommendation-item">
+                ✅ Protein sequences successfully validated and processed
+            </div>
+            <div class="recommendation-item">
+                ✅ Ready for AI implementation and analysis
+            </div>
+            <div class="recommendation-item">
+                📊 {{ results.total_sequences }} sequence(s) with {{ results.total_length }} total amino acids
+            </div>
+            {% if results.uploaded_files %}
+            <div class="recommendation-item">
+                📁 {{ results.uploaded_files|length }} reference file(s) uploaded
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <div style="margin-bottom: 20px;">
+                <button class="action-btn" onclick="exportResults()">📥 Export Results</button>
+                <button class="action-btn" onclick="saveToFavorites()">⭐ Save to Favorites</button>
+                <button class="action-btn" onclick="shareResults()">🔗 Share Results</button>
+            </div>
+            <button class="back-btn" onclick="window.location.href='/'">🔄 Design New Protein</button>
+            <p class="help-text">Tip: Use browser back button or Ctrl+Z in forms to undo changes</p>
+        </div>
+    </div>
+
+    <script>
+        // Action functions
+        function exportResults() {
+            const data = {
+                results: {{ results | tojson }},
+                timestamp: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'protein_input_results.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            alert('Results exported successfully!');
+        }
+
+        function saveToFavorites() {
+            const favorites = JSON.parse(localStorage.getItem('proteinInputFavorites') || '[]');
+            const resultData = {
+                id: '{{ results.protein_data.protein_name or "unnamed" }}',
+                timestamp: '{{ results.timestamp }}',
+                sequences: {{ results.total_sequences }},
+                url: window.location.href
+            };
+            favorites.push(resultData);
+            localStorage.setItem('proteinInputFavorites', JSON.stringify(favorites));
+            alert('Saved to favorites!');
+        }
+
+        function shareResults() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Protein Input Results',
+                    text: 'Check out these protein input results!',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Results URL copied to clipboard!');
+                });
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveToFavorites();
+            }
+            if (e.ctrlKey && e.key === 'e') {
+                e.preventDefault();
+                exportResults();
+            }
+        });
+    </script>
+
+    <script>
+        // Action functions
+        function exportResults() {
+            // Create a downloadable JSON file
+            const data = {
+                results: {{ results | tojson }},
+                timestamp: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'protein_design_results.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            alert('Results exported successfully!');
+        }
+
+        function saveToFavorites() {
+            // Save to localStorage
+            const favorites = JSON.parse(localStorage.getItem('proteinDesignFavorites') || '[]');
+            const resultData = {
+                id: '{{ results.patient_data.patient_id or "unknown" }}',
+                timestamp: '{{ results.timestamp }}',
+                score: {{ results.evaluation.overall_score }},
+                url: window.location.href
+            };
+            favorites.push(resultData);
+            localStorage.setItem('proteinDesignFavorites', JSON.stringify(favorites));
+            alert('Saved to favorites!');
+        }
+
+        function shareResults() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'AI Protein Design Results',
+                    text: 'Check out these protein design results!',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Results URL copied to clipboard!');
+                });
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveToFavorites();
+            }
+            if (e.ctrlKey && e.key === 'e') {
+                e.preventDefault();
+                exportResults();
+            }
+        });
+    </script>
+</body>
+</html>

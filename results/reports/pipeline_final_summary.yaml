@@ -1,0 +1,63 @@
+configuration:
+  models_used:
+    sequence_generator: ProGAN
+    structure_predictor: ESMFold
+  pipeline_version: 1.0.0
+  target_proteins:
+  - HER2_therapeutic
+  - TNF_therapeutic
+data_provenance:
+  ethical_compliance: &id001
+    consent_obtained: true
+    data_usage_policy: Research and educational purposes only
+    gdpr_compliant: true
+    hipaa_compliant: false
+  sources:
+  - anonymized: true
+    license: CC BY 4.0
+    name: UniProt
+    type: public_database
+  - anonymized: true
+    license: PDB License
+    name: PDB
+    type: public_database
+  - anonymized: true
+    license: CC0
+    name: AlphaFold DB
+    type: public_database
+ethical_compliance: *id001
+pipeline_execution:
+  runtime_seconds: 18.358227
+  start_time: '2026-05-20T15:52:21.575096'
+  success: true
+quality_metrics:
+  avg_plddt: !!python/object/apply:numpy._core.multiarray.scalar
+  - &id002 !!python/object/apply:numpy.dtype
+    args:
+    - f8
+    - false
+    - true
+    state: !!python/tuple
+    - 3
+    - <
+    - null
+    - null
+    - null
+    - -1
+    - -1
+    - 0
+  - !!binary |
+    AAAAAADAV0A=
+  best_binding_energy: !!python/object/apply:numpy._core.multiarray.scalar
+  - *id002
+  - !!binary |
+    c+RBSDATJMA=
+  healthy_protein_safety_rate: 0.0
+  her2_pass_rate: 0
+  validation_score: 1.0
+results_summary:
+  docking_runs: 1
+  her2_comparison_completed: true
+  sequences_generated: 3
+  structures_predicted: 1
+  validation_completed: true

@@ -1,0 +1,9 @@
+design_criteria:
+  model_type: ProteinVAE
+  num_sequences: 5
+  training_epochs: 25
+target_protein:
+  constraints: {}
+  function: Cancer therapy
+  name: EGFR
+  sequence: ''

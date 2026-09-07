@@ -1,0 +1,140 @@
+# AI Protein Design Pipeline - Target Specification
+# This file defines the target protein, design goals, and success criteria
+
+project:
+  name: "AI_Protein_Design_Pipeline"
+  version: "1.0.0"
+  description: "End-to-end AI-powered therapeutic protein design pipeline"
+
+target_proteins:
+  - name: "HER2_therapeutic"  # HER2 cancer therapy target
+    uniprot_id: "P04626"  # HER2 UniProt ID
+    pdb_id: "1N8Z"        # Reference PDB structure (if available)
+    alphafold_id: "P04626"  # AlphaFold database ID
+  - name: "TNF_therapeutic"  # TNF inflammation therapy target
+    uniprot_id: "P01375"  # TNF UniProt ID
+    pdb_id: "1TNF"        # Reference PDB structure
+    alphafold_id: "P01375"  # AlphaFold database ID
+
+design_goals:
+  type: "therapeutic"   # Options: binder, enzyme, structural, therapeutic
+  function: "cancer_therapy"  # Cancer therapy targeting HER2
+  target_binding_site: "extracellular_domain"
+  specificity: "high"   # high, medium, low
+
+success_criteria:
+  structure_quality:
+    plddt_threshold: 75.0    # AlphaFold confidence score
+    pae_threshold: 10.0      # Predicted aligned error
+
+  binding_affinity:
+    docking_energy_threshold: -7.5  # kcal/mol (more negative = better)
+    vina_score_threshold: -7.0
+
+  stability:
+    rmsd_threshold: 2.0      # Å (RMSD after equilibration)
+    tm_score_threshold: 0.8  # Template modeling score
+
+  developability:
+    solubility_threshold: 0.6    # Solubility score (0-1)
+    aggregation_risk: "low"      # low, medium, high
+    immunogenicity_risk: "low"   # low, medium, high
+
+pipeline_parameters:
+  sequence_generation:
+    num_sequences: 20  # Generate sequences for HER2-specific design
+    sequence_length:
+      min: 100  # HER2 binder size
+      max: 200  # HER2 binder size
+    diversity_threshold: 0.8
+
+  structure_prediction:
+    method: "RoseTTAFold"  # RoseTTAFold for structure prediction
+    confidence_filter: true
+
+  docking:
+    exhaustiveness: 16
+    num_modes: 10
+    energy_range: 3.0
+
+  molecular_dynamics:
+    simulation_time: 5.0  # ns
+    temperature: 300     # K
+    ensemble: "NPT"
+
+output_formats:
+  sequences: "FASTA"
+  structures: "PDB"
+  docking: "PDBQT"
+  reports: "CSV"
+  plots: "PNG"
+
+# HER2 Standard Comparison Analysis
+her2_comparison:
+  enabled: true
+  reference_protein:
+    name: "HER2_standard"
+    uniprot_id: "P04626"
+    structure_id: "1N8Z"
+    sequence: "MELAALCRWGL LLLALLPPGI AASTQHKVKE LTLQDVSVMG LNLIIIFVLM GVLGIGNFRI HTRIGLKTLE RHQLHTQRMH TLNCEANTPS GQGTARITCG ESGMTRIGSE DIIWVGTGYI LDSVPKRSNA QLLRILGLKR VKRLGSSGCC AISTTGPLAQ VTGIELLQGD GRAFVSNVLA VKKVQ"
+    
+  comparison_criteria:
+    sequence_identity_min: 0.70  # Minimum sequence identity to HER2
+    structure_similarity_min: 0.80  # TM-score threshold
+    binding_site_preservation: true
+    functional_preservation: true
+    
+  post_synthesis_analysis:
+    compare_with_standard: true
+    structural_validation: true
+    functional_testing: true
+    
+# Healthy Protein Reaction Analysis
+healthy_protein_reaction:
+  enabled: true
+  
+  target_healthy_proteins:
+    - name: "Human_ACE2"
+      uniprot_id: "Q9BYF1"
+      reaction_type: "cross_reactivity_check"
+      maximum_cross_reactivity: 0.10
+      
+    - name: "Human_TCR"
+      uniprot_id: "P01834"
+      reaction_type: "immune_response_check"
+      maximum_immune_activation: 0.05
+      
+    - name: "Human_HLA_A"
+      uniprot_id: "P01889"
+      reaction_type: "presentation_check"
+      hla_binding_threshold: 15.0  # nM
+      
+    - name: "Human_HLA_B"
+      uniprot_id: "P01890"
+      reaction_type: "presentation_check"
+      hla_binding_threshold: 15.0  # nM
+      
+  safety_assessments:
+    cross_reactivity_analysis: true
+    immune_activation_analysis: true
+    complement_activation_analysis: true
+    cellular_cytotoxicity_analysis: true
+    
+  pass_fail_criteria:
+    cross_reactivity_score_max: 0.10
+    immune_activation_score_max: 0.05
+    complement_activation_score_max: 0.02
+    cytotoxicity_score_max: 0.15
+
+personalization:
+  enabled: true
+  hla_types: ["HLA-A*02:01", "HLA-B*07:02", "HLA-C*07:02"]  # Example HLA alleles
+  snp_data: "data/genomic_variants.vcf"   # Path to SNP data file
+  genomic_mapping:
+    variants_to_amino_acids: true
+    mutation_hotspots: ["position_123", "position_456", "position_789"]
+    patient_specific_constraints:
+      avoid_toxicity: true
+      maintain_stability: true
+      preserve_function: true
+      avoid_healthy_protein_interaction: true

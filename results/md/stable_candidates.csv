@@ -1,0 +1,2 @@
+ligand_id,ddg,melting_temperature,aggregation_score,flexibility_index,method,success
+GEN_0001_esmfold,-1.952339170904311,71.06398869759468,0.8841878304228354,0.7192396452078937,proxy,True

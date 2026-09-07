@@ -1,0 +1,41 @@
+data_sources:
+  alphafold:
+    base_url: https://alphafold.ebi.ac.uk/files/
+  pdb:
+    base_url: https://files.rcsb.org/download/
+  uniprot:
+    base_url: https://rest.uniprot.org/uniprotkb/
+    format: .fasta
+logging:
+  file: pipeline.log
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  level: INFO
+models:
+  sequence_generator:
+    name: ESMFold
+    temperature: 0.8
+  structure_predictor:
+    confidence_threshold: 75
+    name: ESMFold
+paths:
+  data:
+    processed: data/processed
+    raw: data/raw
+  datasets: datasets
+  models: models
+  results: results
+project:
+  description: Demonstration of AI-powered protein design pipeline
+  last_updated: '2025-11-13 11:05:23'
+  name: AI_Protein_Design
+  version: 1.0.0
+quality:
+  max_sequence_length: 1000
+  min_sequence_length: 50
+  sequence_identity_threshold: 0.95
+visualization:
+  dpi: 300
+  figsize:
+  - 10
+  - 8
+  style: default

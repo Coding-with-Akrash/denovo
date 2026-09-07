@@ -1,0 +1,2 @@
+candidate_id,overall_developability,solubility_score,aggregation_score,immunogenicity_score,manufacturability_score,success
+GEN_0001_esmfold,excellent,0.6243,0.5882,0.0,0.9,True

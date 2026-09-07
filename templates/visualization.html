@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Protein Visualizations - {{ user_id }}</title>
+    <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00d4ff, #090979, #ff0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .viz-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .main-viewer {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .viewer-container {
+            width: 100%;
+            height: 600px;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        #proteinViewer {
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls-panel {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+        }
+
+        .controls-panel h3 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+            display: inline-block;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .control-btn.active {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .protein-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .protein-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .protein-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .protein-title {
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #00d4ff;
+        }
+
+        .protein-viewer {
+            width: 100%;
+            height: 200px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .help-text {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .control-hint {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .viz-container {
+                grid-template-columns: 1fr;
+            }
+
+            .protein-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('results', user_id=user_id) }}" class="back-btn">← Back to Results</a>
+
+        <div class="header">
+            <h1>🕶️ Interactive Protein Visualizations</h1>
+            <p>3D Models and Analysis for Job: {{ user_id }}</p>
+        </div>
+
+        <div class="viz-container">
+            <!-- Main 3D Viewer -->
+            <div class="main-viewer">
+                <h3 style="color: #00d4ff; margin-bottom: 20px;">🧬 Main Protein Structure</h3>
+                <div class="viewer-container">
+                    <div id="proteinViewer"></div>
+                </div>
+        
+                <p class="help-text">
+                    💡 Tips: Click and drag to rotate manually • Scroll to zoom • Right-click for options<br>
+                    Keyboard: Space to toggle rotation • R to reset • F for fullscreen • V to change view
+                </p>
+            </div>
+
+            <!-- Controls Panel -->
+            <div class="controls-panel">
+                <h3>🎮 Controls</h3>
+
+                <div class="control-group">
+                    <label>Rotation:</label><br>
+                    <button class="control-btn active" onclick="toggleRotation()">Stop Rotation</button>
+                    <div class="control-hint">Auto-rotates the protein</div>
+                </div>
+
+                <div class="control-group">
+                    <label>View Mode:</label><br>
+                    <button class="control-btn" onclick="changeViewMode()">Switch View</button>
+                    <div class="control-hint">Cycle through display styles</div>
+                </div>
+
+                <div class="control-group">
+                    <label>Actions:</label><br>
+                    <button class="control-btn" onclick="resetView()">Reset View</button><br>
+                    <button class="control-btn" onclick="toggleFullscreen()">Fullscreen</button>
+                    <div class="control-hint">Reset or expand viewer</div>
+                </div>
+
+                <div class="control-group">
+                    <label for="speedSlider">Rotation Speed:</label><br>
+                    <input type="range" id="speedSlider" min="0.1" max="3" step="0.1" value="1" style="width: 100%;">
+                    <div class="control-hint">Adjust auto-rotation speed</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Protein Models Grid -->
+        <h3 style="color: #00d4ff; margin-bottom: 20px;">🔬 Generated Protein Models</h3>
+        <div class="protein-grid">
+            <div class="protein-card">
+                <div class="protein-title">GEN_0001_esmfold</div>
+                <div id="model1" class="protein-viewer"></div>
+            </div>
+            <div class="protein-card">
+                <div class="protein-title">GEN_0002_esmfold</div>
+                <div id="model2" class="protein-viewer"></div>
+            </div>
+            <div class="protein-card">
+                <div class="protein-title">GEN_0003_esmfold</div>
+                <div id="model3" class="protein-viewer"></div>
+            </div>
+            <div class="protein-card">
+                <div class="protein-title">GEN_0004_esmfold</div>
+                <div id="model4" class="protein-viewer"></div>
+            </div>
+            <div class="protein-card">
+                <div class="protein-title">GEN_0005_esmfold</div>
+                <div id="model5" class="protein-viewer"></div>
+            </div>
+            <div class="protein-card">
+                <div class="protein-title">GEN_0006_esmfold</div>
+                <div id="model6" class="protein-viewer"></div>
+            </div>
+        </div>
+
+        <!-- Statistics Panel -->
+        <div class="stats-panel">
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Protein Models</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">500</div>
+                <div class="stat-label">Amino Acids Each</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">AI</div>
+                <div class="stat-label">Deep Learning Generated</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3D</div>
+                <div class="stat-label">Interactive Models</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mainViewer, rotationInterval, isRotating = true, rotationSpeed = 1;
+        let currentViewMode = 0;
+        const viewModes = [
+            { style: {'cartoon': {'color': 'spectrum'}}, label: 'Cartoon' },
+            { style: {'stick': {'colorscheme': 'amino'}}, label: 'Stick' },
+            { style: {'sphere': {'colorscheme': 'amino'}}, label: 'Sphere' },
+            { style: {'cartoon': {'color': 'blue'}}, label: 'Surface' }
+        ];
+
+        // Sample PDB data for demonstration
+        const pdbData = `HEADER    PROTEIN STRUCTURE PREDICTION
+TITLE     AI-GENERATED SEQUENCE - USER {{ user_id }}
+COMPND    UNK 0
+SOURCE    AI PROTEIN DESIGN PIPELINE
+AUTHOR    AI-GENERATED
+ATOM      1  N   ALA   1       0.000   5.000   0.000  1.00 20.00           N
+ATOM      2  CA  ALA   1       1.447   4.388   0.750  1.00 20.00           C
+ATOM      3  C   ALA   1       2.897   2.702   1.500  1.00 20.00           C
+ATOM      4  O   ALA   1       3.787   1.854   1.250  1.00 20.00           O
+ATOM      5  CB  ALA   1       0.947   3.234   1.750  1.00 20.00           C
+ATOM      6  N   GLY   2       3.247   0.354   2.250  1.00 20.00           N
+ATOM      7  CA  GLY   2       2.847  -2.081   3.000  1.00 20.00           C
+ATOM      8  C   GLY   2       1.393  -4.006   3.750  1.00 20.00           C
+ATOM      9  O   GLY   2       0.603  -4.950   4.500  1.00 20.00           O
+ATOM     10  N   VAL   3       0.706  -4.950   4.500  1.00 20.00           N
+ATOM     11  CA  VAL   3      -0.754  -4.682   5.250  1.00 20.00           C
+ATOM     12  C   VAL   3      -2.384  -3.268   6.000  1.00 20.00           C
+ATOM     13  O   VAL   3      -3.488  -1.054   6.750  1.00 20.00           O
+ATOM     14  CB  VAL   3       0.246  -5.282   5.250  1.00 20.00           C
+ATOM     15  CG1 VAL   3       0.746  -6.582   6.000  1.00 20.00           C
+ATOM     16  CG2 VAL   3       1.246  -4.282   4.250  1.00 20.00           C
+ATOM     17  N   LEU   4      -4.888  -1.054   6.750  1.00 20.00           N
+ATOM     18  CA  LEU   4      -4.795   1.418   7.500  1.00 20.00           C
+ATOM     19  C   LEU   4      -3.528   3.543   8.250  1.00 20.00           C
+ATOM     20  O   LEU   4      -1.397   4.801   9.000  1.00 20.00           O
+ATOM     21  CB  LEU   4      -5.795   0.918   7.500  1.00 20.00           C
+ATOM     22  CG  LEU   4      -6.795   1.918   8.500  1.00 20.00           C
+ATOM     23  CD1 LEU   4      -7.795   2.918   9.500  1.00 20.00           C
+ATOM     24  CD2 LEU   4      -5.795   0.918   9.500  1.00 20.00           C
+ATOM     25  N   PHE   5      -1.397   4.801   9.000  1.00 20.00           N
+ATOM     26  CA  PHE   5       1.076   4.883   9.750  1.00 20.00           C
+ATOM     27  C   PHE   5       3.285   3.770  10.500  1.00 20.00           C
+ATOM     28  O   PHE   5       4.690   1.733  11.250  1.00 20.00           O
+ATOM     29  CB  PHE   5       0.576   5.883  10.750  1.00 20.00           C
+ATOM     30  CG  PHE   5       1.576   6.883  11.750  1.00 20.00           C
+ATOM     31  CD1 PHE   5       2.576   7.883  12.750  1.00 20.00           C
+ATOM     32  CD2 PHE   5       0.576   6.883  12.750  1.00 20.00           C
+ATOM     33  CE1 PHE   5       3.576   8.883  13.750  1.00 20.00           C
+ATOM     34  CE2 PHE   5       1.576   7.883  13.750  1.00 20.00           C
+ATOM     35  CZ  PHE   5       2.576   8.883  14.750  1.00 20.00           C
+TER
+END`;
+
+        // Initialize main viewer
+        function initMainViewer() {
+            mainViewer = $3Dmol.createViewer('proteinViewer', {
+                backgroundColor: 'transparent'
+            });
+
+            mainViewer.addModel(pdbData, 'pdb');
+            mainViewer.setStyle({'cartoon': {'color': 'spectrum'}});
+            mainViewer.zoomTo();
+            mainViewer.render();
+
+            // Start automatic rotation
+            startRotation();
+        }
+
+        // Rotation functions
+        function startRotation() {
+            if (rotationInterval) clearInterval(rotationInterval);
+            rotationInterval = setInterval(() => {
+                if (mainViewer && isRotating) {
+                    mainViewer.rotate(2 * rotationSpeed, {x: 0, y: 1, z: 0});
+                    mainViewer.render();
+                }
+            }, 50);
+        }
+
+        function stopRotation() {
+            if (rotationInterval) {
+                clearInterval(rotationInterval);
+                rotationInterval = null;
+            }
+        }
+
+        function toggleRotation() {
+            const btn = document.querySelector('button[onclick="toggleRotation()"]');
+            if (isRotating) {
+                stopRotation();
+                btn.textContent = 'Start Rotation';
+                btn.classList.remove('active');
+                isRotating = false;
+            } else {
+                startRotation();
+                btn.textContent = 'Stop Rotation';
+                btn.classList.add('active');
+                isRotating = true;
+            }
+        }
+
+        function changeSpeed(speed) {
+            rotationSpeed = parseFloat(speed || document.getElementById('speedSlider').value);
+            if (isRotating) {
+                stopRotation();
+                startRotation();
+            }
+        }
+
+        function changeViewMode() {
+            if (!mainViewer) return;
+
+            currentViewMode = (currentViewMode + 1) % viewModes.length;
+            const mode = viewModes[currentViewMode];
+
+            mainViewer.setStyle(mode.style);
+            mainViewer.render();
+        }
+
+        function resetView() {
+            if (mainViewer) {
+                mainViewer.zoomTo();
+                mainViewer.render();
+            }
+        }
+
+        function toggleFullscreen() {
+            const container = document.querySelector('.main-viewer');
+            if (!document.fullscreenElement) {
+                container.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Initialize small viewers
+        function initSmallViewers() {
+            for (let i = 1; i <= 6; i++) {
+                const viewer = $3Dmol.createViewer(`model${i}`);
+                viewer.addModel(pdbData, 'pdb');
+                viewer.setStyle({'cartoon': {'color': 'spectrum'}});
+                viewer.zoomTo();
+                viewer.render();
+            }
+        }
+
+        // Mouse interaction for main viewer
+        function addMouseInteraction() {
+            const viewerElement = document.getElementById('proteinViewer');
+            if (!viewerElement) return;
+
+            viewerElement.addEventListener('mousedown', () => {
+                stopRotation();
+                const btn = document.querySelector('button[onclick="toggleRotation()"]');
+                btn.textContent = 'Start Rotation';
+                btn.classList.remove('active');
+                isRotating = false;
+            });
+
+            viewerElement.addEventListener('mouseup', () => {
+                setTimeout(() => {
+                    if (!isRotating) {
+                        startRotation();
+                        const btn = document.querySelector('button[onclick="toggleRotation()"]');
+                        btn.textContent = 'Stop Rotation';
+                        btn.classList.add('active');
+                        isRotating = true;
+                    }
+                }, 2000);
+            });
+        }
+
+        // Event listeners
+        document.getElementById('speedSlider').addEventListener('input', function() {
+            changeSpeed(this.value);
+        });
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                initMainViewer();
+                initSmallViewers();
+                addMouseInteraction();
+            }, 500);
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (mainViewer) {
+                mainViewer.resize();
+                mainViewer.render();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            switch(e.key.toLowerCase()) {
+                case ' ':
+                    e.preventDefault();
+                    toggleRotation();
+                    break;
+                case 'r':
+                    e.preventDefault();
+                    resetView();
+                    break;
+                case 'f':
+                    e.preventDefault();
+                    toggleFullscreen();
+                    break;
+                case 'v':
+                    e.preventDefault();
+                    changeViewMode();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

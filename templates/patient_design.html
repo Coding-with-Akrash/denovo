@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient-Specific AI Protein Design</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border-left: 4px solid #00d4ff;
+        }
+
+        .form-section h3 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1em;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .file-upload input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-upload label {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .file-upload label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #1a1a2e;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .alert-error {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            transition: width 0.3s ease;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .help-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: #00d4ff;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 12px;
+            line-height: 16px;
+            cursor: help;
+            margin-left: 5px;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .info-box h4 {
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧬 Patient-Specific AI Protein Design</h1>
+            <p>Design personalized therapeutic proteins with real-time safety evaluation</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="info-box">
+            <h4>⚠️ Important Notice</h4>
+            <p>This tool is for research purposes only. Designed proteins should undergo rigorous experimental validation before any clinical application. Results are predictions and may not reflect real-world performance.</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="form-container" id="designForm">
+            <!-- Patient Information Section -->
+            <div class="form-section">
+                <h3>👤 Patient Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="patient_id">Patient ID (optional): <span class="help-icon" data-tooltip="Unique identifier for the patient (optional for tracking)">?</span></label>
+                        <input type="text" id="patient_id" name="patient_id"
+                                placeholder="e.g., PAT001">
+                    </div>
+                    <div class="form-group">
+                        <label for="target_protein">Target Protein: <span class="help-icon" data-tooltip="Select the therapeutic target protein for this patient">?</span></label>
+                        <select id="target_protein" name="target_protein" required>
+                            <option value="HER2">HER2 (Breast Cancer)</option>
+                            <option value="EGFR">EGFR (Lung Cancer)</option>
+                            <option value="PD1">PD-1 (Immunotherapy)</option>
+                            <option value="CTLA4">CTLA-4 (Autoimmune)</option>
+                            <option value="custom">Custom Target</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HLA Typing Section -->
+            <div class="form-section">
+                <h3>🧬 HLA Typing</h3>
+                <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 15px; font-size: 0.9em;">
+                    Select the patient's HLA alleles for personalized immune compatibility assessment:
+                </p>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hla_a_0201" name="hla_types" value="HLA-A*02:01">
+                        <label for="hla_a_0201">HLA-A*02:01</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hla_b_0702" name="hla_types" value="HLA-B*07:02">
+                        <label for="hla_b_0702">HLA-B*07:02</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hla_c_0702" name="hla_types" value="HLA-C*07:02">
+                        <label for="hla_c_0702">HLA-C*07:02</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hla_a_0101" name="hla_types" value="HLA-A*01:01">
+                        <label for="hla_a_0101">HLA-A*01:01</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hla_b_0801" name="hla_types" value="HLA-B*08:01">
+                        <label for="hla_b_0801">HLA-B*08:01</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="hla_drb1_0101" name="hla_types" value="HLA-DRB1*01:01">
+                        <label for="hla_drb1_0101">HLA-DRB1*01:01</label>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label for="custom_hla">Custom HLA Types (comma-separated):</label>
+                    <input type="text" id="custom_hla" name="custom_hla"
+                           placeholder="e.g., HLA-A*03:01, HLA-B*15:01">
+                </div>
+            </div>
+
+            <!-- Genomic Variants Section -->
+            <div class="form-section">
+                <h3>🧫 Genomic Variants</h3>
+                <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 15px; font-size: 0.9em;">
+                    Upload patient-specific genetic variants for personalized design constraints:
+                </p>
+                <div class="form-group">
+                    <label>VCF File Upload:</label>
+                    <div class="file-upload">
+                        <input type="file" id="vcf_file" name="vcf_file" accept=".vcf,.txt">
+                        <label for="vcf_file">Choose VCF File</label>
+                    </div>
+                    <small style="color: rgba(255, 255, 255, 0.7); margin-top: 10px; display: block;">
+                        Supported formats: VCF (.vcf), TXT (.txt) - Max 16MB
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="genomic_variants">Or paste VCF content directly:</label>
+                    <textarea id="genomic_variants" name="genomic_variants"
+                              placeholder="#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+chr1	12345	rs123	A	G	50	PASS	AF=0.1"></textarea>
+                </div>
+            </div>
+
+            <!-- Design Parameters Section -->
+            <div class="form-section">
+                <h3>⚙️ Design Parameters</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="num_sequences">Number of Sequences to Generate:</label>
+                        <input type="number" id="num_sequences" name="num_sequences"
+                               min="1" max="20" value="5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="design_type">Design Type:</label>
+                        <select id="design_type" name="design_type">
+                            <option value="therapeutic">Therapeutic Antibody</option>
+                            <option value="binder">Protein Binder</option>
+                            <option value="inhibitor">Enzyme Inhibitor</option>
+                            <option value="agonist">Receptor Agonist</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="design_constraints">Design Constraints (optional):</label>
+                    <textarea id="design_constraints" name="design_constraints"
+                              placeholder="e.g., Molecular weight < 50kDa, High stability, Low immunogenicity, Specific binding affinity > 10nM"></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                🚀 Start Patient-Specific Design
+            </button>
+            <p style="text-align: center; margin-top: 10px; color: rgba(255, 255, 255, 0.6); font-size: 0.9em;">Tip: Press Ctrl+Enter to submit quickly</p>
+        </form>
+
+        <!-- Progress Indicator -->
+        <div id="progressContainer" style="display: none; margin-top: 30px;">
+            <div class="form-section">
+                <h3>📊 Design Progress</h3>
+                <div class="progress-bar">
+                    <div id="progressBar" class="progress-fill" style="width: 0%;"></div>
+                </div>
+                <p id="progressText" style="text-align: center; margin-top: 10px; color: rgba(255, 255, 255, 0.8);">Initializing...</p>
+            </div>
+        </div>
+
+        <!-- File Upload Feedback -->
+        <div id="vcfFeedback" style="display: none; margin-top: 20px;">
+            <div class="alert alert-success">
+                <strong>VCF File Selected:</strong>
+                <p id="vcfFileInfo" style="margin-top: 10px;"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Progress indicator
+        function updateProgress(message, percent) {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            if (progressBar && progressText) {
+                progressBar.style.width = percent + '%';
+                progressText.textContent = message;
+            }
+        }
+
+        // Error display
+        function showError(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-error';
+            alertDiv.innerHTML = `<strong>Error:</strong> ${message}`;
+            const container = document.querySelector('.container');
+            container.insertBefore(alertDiv, container.firstChild);
+            setTimeout(() => alertDiv.remove(), 5000);
+        }
+
+        // Form validation and enhancement
+        document.getElementById('designForm').addEventListener('submit', function(e) {
+            const targetProtein = document.getElementById('target_protein').value;
+            const hlaChecked = document.querySelectorAll('input[name="hla_types"]:checked').length;
+            const customHla = document.getElementById('custom_hla').value.trim();
+            const vcfFile = document.getElementById('vcf_file').files[0];
+            const vcfText = document.getElementById('genomic_variants').value.trim();
+            const numSequences = document.getElementById('num_sequences').value;
+
+            if (!targetProtein) {
+                e.preventDefault();
+                showError('Please select a target protein');
+                document.getElementById('target_protein').focus();
+                return;
+            }
+
+            if (hlaChecked === 0 && !customHla) {
+                e.preventDefault();
+                showError('Please select at least one HLA type or enter custom HLA types');
+                return;
+            }
+
+            if (numSequences < 1 || numSequences > 20) {
+                e.preventDefault();
+                showError('Number of sequences must be between 1 and 20');
+                document.getElementById('num_sequences').focus();
+                return;
+            }
+
+            if (!vcfFile && !vcfText) {
+                const confirm = window.confirm('No genomic variants provided. Continue with generic design?');
+                if (!confirm) {
+                    e.preventDefault();
+                    return;
+                }
+            }
+
+            // Update button
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.textContent = '⏳ Processing Patient Data...';
+            submitBtn.disabled = true;
+
+            // Show progress
+            document.getElementById('progressContainer').style.display = 'block';
+            updateProgress('Analyzing patient data...', 20);
+        });
+
+        // File upload feedback
+        document.getElementById('vcf_file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const feedback = document.getElementById('vcfFeedback');
+            const info = document.getElementById('vcfFileInfo');
+            if (file) {
+                info.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                feedback.style.display = 'block';
+                // Clear text area if file is selected
+                document.getElementById('genomic_variants').value = '';
+            } else {
+                feedback.style.display = 'none';
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('submitBtn').click();
+            }
+        });
+
+        // Help tooltips
+        document.querySelectorAll('.help-icon').forEach(icon => {
+            icon.addEventListener('mouseover', function(e) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = this.dataset.tooltip;
+                document.body.appendChild(tooltip);
+                tooltip.style.left = e.pageX + 'px';
+                tooltip.style.top = (e.pageY - 30) + 'px';
+            });
+            icon.addEventListener('mouseout', function() {
+                document.querySelector('.tooltip')?.remove();
+            });
+        });
+
+        // HLA selection handling
+        document.querySelectorAll('input[name="hla_types"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const customHla = document.getElementById('custom_hla');
+                if (this.checked && customHla.value) {
+                    customHla.value = '';
+                }
+            });
+        });
+
+        document.getElementById('custom_hla').addEventListener('input', function() {
+            if (this.value.trim()) {
+                document.querySelectorAll('input[name="hla_types"]').forEach(cb => cb.checked = false);
+            }
+        });
+
+        // Target protein change handler
+        document.getElementById('target_protein').addEventListener('change', function() {
+            const customTarget = document.getElementById('custom_target');
+            if (this.value === 'custom') {
+                this.style.display = 'none';
+                if (!customTarget) {
+                    const customInput = document.createElement('input');
+                    customInput.type = 'text';
+                    customInput.id = 'custom_target';
+                    customInput.name = 'custom_target';
+                    customInput.placeholder = 'Enter custom target protein';
+                    customInput.required = true;
+                    customInput.style.cssText = this.style.cssText;
+                    this.parentNode.appendChild(customInput);
+                }
+                document.getElementById('custom_target').style.display = 'block';
+            } else {
+                if (customTarget) customTarget.style.display = 'none';
+                this.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

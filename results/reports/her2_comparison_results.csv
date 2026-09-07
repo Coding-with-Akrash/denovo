@@ -1,0 +1,3 @@
+sequence_id,sequence_length,sequence_identity,similarity_score,meets_criteria,sequence_identity_min,structure_similarity_min
+GEN_0001,16,0.0625,0.07500000000000001,False,False,False
+GEN_0002,15,0.0,0.02666666666666667,False,False,False

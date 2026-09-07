@@ -1,0 +1,206 @@
+====================================================================================================
+AI PROTEIN DESIGN PIPELINE - COMPLETE COMBINED REPORT
+====================================================================================================
+Generated on: 2026-05-20 15:52:39
+Project: AI Protein Design Pipeline v1.0.0
+Target: HER2_therapeutic
+Design Goal: therapeutic
+
+EXECUTIVE SUMMARY
+--------------------------------------------------
+Pipeline Progress: 9/9 stages completed
+Protein Sequences: 0 generated, 0 passed quality filters
+Structure Predictions: 1 structures, 1 high-confidence
+Docking Analysis: 1 dockings performed, 100.0% success rate
+HER2 Comparison: 0.0% sequences passed HER2 similarity criteria
+Scientific validation completed with benchmarking against baseline methods
+
+PIPELINE OVERVIEW
+--------------------------------------------------
+[OK] Data Collection: COMPLETED
+[OK] Data Preprocessing: COMPLETED
+[OK] Sequence Generation: COMPLETED
+[OK] Structure Prediction: COMPLETED
+[OK] Docking Analysis: COMPLETED
+[OK] Stability Analysis: COMPLETED
+[OK] Developability Assessment: COMPLETED
+[OK] HER2 Comparison: COMPLETED
+[OK] Scientific Validation: COMPLETED
+[PENDING] Reporting: NOT_RUN
+
+DETAILED PIPELINE RESULTS
+--------------------------------------------------
+
+DATA COLLECTION
+========================================
+Statistics:
+  Total Files: 5
+  Uniprot Files: 2
+  Pdb Files: 2
+  Alphafold Files: 0
+  Related Files: 1
+  Collection Timestamp: E:\ai_protein_design_project
+
+
+DATA PREPROCESSING
+========================================
+Statistics:
+  Input Sequences: 405
+  After Length Filter: 12
+  After Deduplication: 11
+  Average Length: 559.3636
+  Average Charge: -32.1818
+  Average Hydrophobicity: -0.1581
+  Tensor Dataset Shape: torch.Size([11, 512])
+
+
+SEQUENCE GENERATION
+========================================
+
+
+STRUCTURE PREDICTION
+========================================
+Statistics:
+  Total Predictions: 1
+  High Confidence: 1
+  Low Confidence: 0
+  Average Plddt: 95.0000
+  Average Pae: 9.0715
+  Method Used: ESMFold
+
+
+DOCKING ANALYSIS
+========================================
+Statistics:
+  Total Docked: 1
+  Good Binders: 1
+  Poor Binders: 0
+  Best Energy: -10.0375
+  Worst Energy: -10.0375
+  Average Energy: -10.0375
+  Energy Std: nan
+  Success Rate: 1.0000
+
+
+STABILITY ANALYSIS
+========================================
+Statistics:
+  Total Analyzed: 1
+  Stable Count: 1
+  Unstable Count: 0
+  Stability Rate: 1.0000
+  Avg Ddg: -0.4564
+  Best Ddg: -0.4564
+  Worst Ddg: -0.4564
+
+
+DEVELOPABILITY ASSESSMENT
+========================================
+Statistics:
+  Total Assessed: 1
+  Excellent Count: 0
+  Good Count: 1
+  Moderate Count: 0
+  Poor Count: 0
+  Success Rate: 1.0000
+
+
+HER2 COMPARISON ANALYSIS
+========================================
+
+
+SCIENTIFIC VALIDATION
+========================================
+
+GENERATED PROTEIN SEQUENCES
+--------------------------------------------------
+
+
+STRUCTURE PREDICTION RESULTS
+--------------------------------------------------
+Structure Prediction Statistics:
+  Total Predictions: 1
+  High Confidence: 1
+  Low Confidence: 0
+  Average Plddt: 95.0000
+  Average Pae: 9.0715
+  Method Used: ESMFold
+
+Predicted Structures: 1
+  Structure 1: N/A
+    File: N/A
+    Confidence: {'pLDDT': 95.0, 'PAE': 9.071523483577755}
+
+DOCKING ANALYSIS RESULTS
+--------------------------------------------------
+Docking Analysis Statistics:
+  Total Docked: 1
+  Good Binders: 1
+  Poor Binders: 0
+  Best Energy: -10.0375
+  Worst Energy: -10.0375
+  Average Energy: -10.0375
+  Energy Std: nan
+  Success Rate: 1.0000
+
+Docking Results: 1
+  Docking 1: N/A
+    Binding Energy: -10.037477739375595 kcal/mol
+    RMSD: 0.959138136866398 Å
+
+HER2 COMPARISON ANALYSIS
+--------------------------------------------------
+HER2 Comparison Results:
+  Enabled: True
+  Reference Sequence: MELAALCRWGL LLLALLPPGI AASTQHKVKE LTLQDVSVMG LNLIIIFVLM GVLGIGNFRI HTRIGLKTLE RHQLHTQRMH TLNCEANTPS GQGTARITCG ESGMTRIGSE DIIWVGTGYI LDSVPKRSNA QLLRILGLKR VKRLGSSGCC AISTTGPLAQ VTGIELLQGD GRAFVSNVLA VKKVQ
+  Total Sequences: 2
+  Passes Criteria: 0
+  Pass Rate: 0.0000
+  Comparison Results: [{'sequence_id': 'GEN_0001', 'generated_sequence': 'HER2_therapeutic', 'sequence_identity': 0.0625, 'similarity_score': 0.07500000000000001, 'meets_criteria': False, 'criteria_details': {'sequence_identity_min': False, 'structure_similarity_min': False}}, {'sequence_id': 'GEN_0002', 'generated_sequence': 'TNF_therapeutic', 'sequence_identity': 0.0, 'similarity_score': 0.02666666666666667, 'meets_criteria': False, 'criteria_details': {'sequence_identity_min': False, 'structure_similarity_min': False}}]
+  Average Identity: 0.0312
+  Average Similarity: 0.0508
+
+Healthy Protein Reaction Analysis:
+  Enabled: True
+  Overall Stats: {'total_sequences': 3, 'safe_sequences': 0, 'safety_rate': 0.0, 'pass_criteria': False}
+  Target Results: {'HER2_therapeutic': {'total_sequences': 2, 'safe_sequences': 0, 'safety_rate': 0.0, 'pass_criteria': False, 'reaction_results': [{'sequence_id': 'HER2_therapeutic_GEN_0001', 'generated_sequence': 'DFCFCWWLQFICIFWHHTMYPVYRKCPCMWFSPERKCDYFVSTGKMKQTIKDTCTQCGGTYQMVPQGWNWSIIRVPTHMYEPITGPNFMHNGMVILFDYQMHPWPEVQCYYYFCHHP', 'protein_reactions': [{'target_protein': 'Human_ACE2', 'target_uniprot_id': 'Q9BYF1', 'cross_reactivity_score': 0.15, 'immune_activation_score': 0.05146426446075263, 'safety_pass': False, 'reaction_type': 'cross_reactivity_check', 'thresholds': {'max_cross_reactivity': 0.1, 'max_immune_activation': 0.05}}, {'target_protein': 'Human_TCR', 'target_uniprot_id': 'P01834', 'cross_reactivity_score': 0.15, 'immune_activation_score': 0.04775097897598907, 'safety_pass': False, 'reaction_type': 'immune_response_check', 'thresholds': {'max_cross_reactivity': 0.1, 'max_immune_activation': 0.05}}, {'target_protein': 'Human_HLA_A', 'target_uniprot_id': 'P01889', 'cross_reactivity_score': 0.15, 'immune_activation_score': 0.03856129044395179, 'safety_pass': False, 'reaction_type': 'presentation_check', 'thresholds': {'max_cross_reactivity': 0.1, 'max_immune_activation': 0.05}}, {'target_protein': 'Human_HLA_B', 'target_uniprot_id': 'P01890', 'cross_reactivity_score': 0.15, 'immune_activation_score': 0.053263699777698854, 'safety_pass': False, 'reaction_type': 'presentation_check', 'thresholds': {'max_cross_reactivity': 0.1, 'max_immune_activation': 0.05}}], 'overall_safety_pass': False}, {'sequence_id': 'HER2_therapeutic_GEN_0002', 'generated_sequence': 'EYWTPKIQPTIIYASTTPDTAKWCWGRGIIFKQAPMVFKPRCSFWPMQQNLRICTNYPPSYWWHFTIRVSWPKPVCYAIHFLYFFYSFFCCWHHCEYVRYGHIMMMNKDQVHGHFMWVTPPDGKRDWRMAKPIWVTMTICCTKETKKFEWSDTAADVTF', 'protein_reactions': [{'target_protein': 'Human_ACE2', 'target_uniprot_id': 'Q9BYF1', 'cross_reactivity_score': 0.15, 'immune_activation_score': 0.05391117466523894, 'safety_pass': False, 'reaction_type': 'cross_reactivity_check', 'thresholds': {'max_cross_reactivity': 0.1, 'max_immune_activation': 0.05}}, {'target_protein': 'Human_TCR', 'target_uniprot_id': 'P01834', 'cross_reactivity_score': 0.15, 'immune_activation_score': 0.04141981556103976, 'safety_pass': False, 'reaction_type': 'immune_response_check', 'thresholds': {'max_cross_reactivity': 0.1, 'max_immune_activation': 0.05}}, {'target_protein': 'Human_HLA_A', 'target_uniprot_id': 'P01889', 'cross_reactivity_score': 0.15, 'immune_activation_score': 0.049263937999757736, 'safety_pass': False, 'reaction_type': 'presentation_check', 'thresholds': {'max_cross_reactivity': 0.1, 'max_immune_activation': 0.05}}, {'target_protein': 'Human_HLA_B', 'target_uniprot_id': 'P01890', 'cross_reactivity_score': 0.15, 'immune_activation_score': 0.03824932617423512, 'safety_pass': False, 'reaction_type': 'presentation_check', 'thresholds': {'max_cross_reactivity': 0.1, 'max_immune_activation': 0.05}}], 'overall_safety_pass': False}]}, 'TNF_therapeutic': {'total_sequences': 1, 'safe_sequences': 0, 'safety_rate': 0.0, 'pass_criteria': False, 'reaction_results': [{'sequence_id': 'TNF_therapeutic_GEN_0001', 'generated_sequence': 'PDCYPKCQEGELPWPDEWPNWVPLPHVYCKYRCDPHYRQHQYAGSATTEAKPQEGGFNWYWCNCNSSMPFGEDHSNMLTGWIAMPKPPLASPSSDGWAKVA', 'protein_reactions': [{'target_protein': 'Human_ACE2', 'target_uniprot_id': 'Q9BYF1', 'cross_reactivity_score': 0.15, 'immune_activation_score': 0.03804128686171716, 'safety_pass': False, 'reaction_type': 'cross_reactivity_check', 'thresholds': {'max_cross_reactivity': 0.1, 'max_immune_activation': 0.05}}, {'target_protein': 'Human_TCR', 'target_uniprot_id': 'P01834', 'cross_reactivity_score': 0.15, 'immune_activation_score': 0.03913321406123724, 'safety_pass': False, 'reaction_type': 'immune_response_check', 'thresholds': {'max_cross_reactivity': 0.1, 'max_immune_activation': 0.05}}, {'target_protein': 'Human_HLA_A', 'target_uniprot_id': 'P01889', 'cross_reactivity_score': 0.15, 'immune_activation_score': 0.04851428988473751, 'safety_pass': False, 'reaction_type': 'presentation_check', 'thresholds': {'max_cross_reactivity': 0.1, 'max_immune_activation': 0.05}}, {'target_protein': 'Human_HLA_B', 'target_uniprot_id': 'P01890', 'cross_reactivity_score': 0.15, 'immune_activation_score': 0.03583159942426846, 'safety_pass': False, 'reaction_type': 'presentation_check', 'thresholds': {'max_cross_reactivity': 0.1, 'max_immune_activation': 0.05}}], 'overall_safety_pass': False}]}}
+  Target Proteins: [{'name': 'Human_ACE2', 'uniprot_id': 'Q9BYF1', 'reaction_type': 'cross_reactivity_check', 'maximum_cross_reactivity': 0.1}, {'name': 'Human_TCR', 'uniprot_id': 'P01834', 'reaction_type': 'immune_response_check', 'maximum_immune_activation': 0.05}, {'name': 'Human_HLA_A', 'uniprot_id': 'P01889', 'reaction_type': 'presentation_check', 'hla_binding_threshold': 15.0}, {'name': 'Human_HLA_B', 'uniprot_id': 'P01890', 'reaction_type': 'presentation_check', 'hla_binding_threshold': 15.0}]
+  Safety Criteria: {'cross_reactivity_score_max': 0.1, 'immune_activation_score_max': 0.05, 'complement_activation_score_max': 0.02, 'cytotoxicity_score_max': 0.15}
+
+SCIENTIFIC VALIDATION RESULTS
+--------------------------------------------------
+Performance Metrics:
+  Structure Quality:
+    Average Plddt: 95.0000
+    High Confidence Structures: 1
+    Total Structures: 1
+    Confidence Success Rate: 1.0000
+  Docking Performance:
+    Average Binding Energy: -10.0375
+    Good Binders Count: 1
+    Binding Success Rate: 1.0000
+    Best Binding Energy: -10.0375
+    Energy Distribution Std: nan
+  Stability Metrics:
+    Average Rmsd: 0
+    Stability Score: 0
+
+Baseline Comparison:
+  Model: ProGen
+  Model: ESM-1b
+  Model: Random
+
+RECOMMENDATIONS AND CONCLUSIONS
+--------------------------------------------------
+* Consider generating more sequences for better coverage (current: <100)
+* High-confidence structure predictions obtained - good for downstream analysis
+* Promising docking results - sequences show good binding potential
+* Low HER2 similarity - review design constraints or target requirements
+* Validate top candidates experimentally before proceeding to development
+* Consider computational mutagenesis for further optimization
+* Document all findings for regulatory submission
+
+====================================================================================================
+END OF REPORT
+Generated by AI Protein Design Pipeline
+====================================================================================================

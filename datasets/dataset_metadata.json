@@ -1,0 +1,24 @@
+{
+  "created_date": "2026-01-30 12:33:33",
+  "version": "1.0.0",
+  "description": "Fresh protein sequence dataset for AI training",
+  "total_sequences": 12,
+  "sequence_types": [
+    "HER2_Therapeutic",
+    "Insulin_Analog",
+    "EGF_Variant",
+    "VEGF_Enhanced",
+    "TNF_Alpha",
+    "IL2_Cytokine",
+    "EPO_Mimetic",
+    "GLP1_Analog",
+    "FGF21_Metabolic",
+    "PDGF_Variant",
+    "P53_Mutant",
+    "BRCA1_Variant"
+  ],
+  "format": "FASTA with headers",
+  "length_range": "130-200 amino acids",
+  "quality": "High-quality curated sequences",
+  "usage": "Training ProGAN and VAE models"
+}

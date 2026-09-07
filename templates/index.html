@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Input Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #00d4ff, #090979, #ff0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite alternate;
+        }
+
+        .help-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .help-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: rgba(26, 26, 46, 0.95);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 80%;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: #00d4ff;
+            cursor: pointer;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border-left: 4px solid #00d4ff;
+        }
+
+        .form-section h3 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1em;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-upload input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-upload label {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .file-upload label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #1a1a2e;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-card h4 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .alert-error {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            transition: width 0.3s ease;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .help-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: #00d4ff;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 12px;
+            line-height: 16px;
+            cursor: help;
+            margin-left: 5px;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="help-btn" onclick="showHelp()">❓ Help</button>
+        <div class="header">
+            <h1>🧬 Protein Input Interface</h1>
+            <p>Submit your protein sequence for AI-powered implementation</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'error' if category == 'error' else 'success' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" enctype="multipart/form-data" class="form-container" id="proteinInputForm">
+            <!-- Protein Input Section -->
+            <div class="form-section">
+                <h3>🧬 Protein Input</h3>
+                <div class="form-group">
+                    <label for="protein_sequence">Protein Sequence (FASTA format): <span class="help-icon" data-tooltip="Enter your protein sequence in FASTA format. Include >header lines for multiple sequences">?</span></label>
+                    <textarea id="protein_sequence" name="protein_sequence" required
+                              placeholder=">Protein_Name&#10;MVKLWAALLLAAALCLLGAAG...&#10;&#10;>Another_Protein&#10;MKVLWAALLL..."></textarea>
+                    <div id="sequenceError" class="error-message">Please enter a valid protein sequence</div>
+                </div>
+            </div>
+
+            <!-- Optional Parameters Section -->
+            <div class="form-section">
+                <h3>⚙️ Optional Parameters</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="protein_name">Protein Name: <span class="help-icon" data-tooltip="Optional name for your protein (used for identification)">?</span></label>
+                        <input type="text" id="protein_name" name="protein_name"
+                                placeholder="e.g., My_Protein_Design">
+                    </div>
+                    <div class="form-group">
+                        <label for="target_length">Target Length (amino acids):</label>
+                        <input type="number" id="target_length" name="target_length"
+                                min="10" max="1000" placeholder="Leave empty for auto">
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Upload Section -->
+            <div class="form-section">
+                <h3>📁 Additional Files (Optional)</h3>
+                <div class="form-group">
+                    <label>Upload Reference Files:</label>
+                    <div class="file-upload">
+                        <input type="file" id="reference_files" name="reference_files" multiple accept=".fasta,.fa,.txt">
+                        <label for="reference_files">Choose Files</label>
+                    </div>
+                    <small style="color: rgba(255, 255, 255, 0.7); margin-top: 10px; display: block;">
+                        Upload additional FASTA files or reference sequences
+                    </small>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">📤 Submit Protein for Implementation</button>
+            <p style="text-align: center; margin-top: 10px; color: rgba(255, 255, 255, 0.6); font-size: 0.9em;">Tip: Press Ctrl+Enter to submit quickly</p>
+        </form>
+
+        <!-- Progress Indicator -->
+        <div id="progressContainer" style="display: none; margin-top: 30px;">
+            <div class="form-section">
+                <h3>📊 Pipeline Progress</h3>
+                <div class="progress-bar">
+                    <div id="progressBar" class="progress-fill" style="width: 0%;"></div>
+                </div>
+                <p id="progressText" style="text-align: center; margin-top: 10px; color: rgba(255, 255, 255, 0.8);">Initializing...</p>
+            </div>
+        </div>
+
+        <!-- File Upload Feedback -->
+        <div id="fileFeedback" style="display: none; margin-top: 20px;">
+            <div class="alert alert-success">
+                <strong>Files Selected:</strong>
+                <ul id="fileList" style="margin-top: 10px;"></ul>
+            </div>
+        </div>
+
+
+        <!-- Help Modal -->
+        <div id="helpModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeHelp()">&times;</span>
+                <h2 style="color: #00d4ff; margin-bottom: 20px;">🆘 Help & Documentation</h2>
+                <h3>Getting Started</h3>
+                <p>Enter your protein sequence in FASTA format. Optionally provide a name and target length. Additional reference files can be uploaded.</p>
+
+                <h3>FASTA Format</h3>
+                <p>Use standard FASTA format:<br>
+                <code>>Protein_Name<br>
+                MVKLWAALLLAAALCLLGAAG...</code></p>
+
+                <h3>Keyboard Shortcuts</h3>
+                <ul>
+                    <li><strong>Ctrl+Enter:</strong> Submit form</li>
+                </ul>
+
+                <h3>Tips</h3>
+                <ul>
+                    <li>FASTA headers start with ></li>
+                    <li>Sequences use standard amino acid codes</li>
+                    <li>Multiple sequences can be entered</li>
+                    <li>Hover over help icons (?) for field guidance</li>
+                </ul>
+
+                <h3>Usability Principles Applied</h3>
+                <p>This interface follows Nielsen's 10 usability heuristics and Shneiderman's 8 golden rules for optimal user experience.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Progress indicator
+        let progressInterval;
+        function updateProgress(message, percent) {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            if (progressBar && progressText) {
+                progressBar.style.width = percent + '%';
+                progressText.textContent = message;
+            }
+        }
+
+        // Form validation and enhancement
+        document.getElementById('proteinInputForm').addEventListener('submit', function(e) {
+            const proteinSequence = document.getElementById('protein_sequence').value.trim();
+            const targetLength = document.getElementById('target_length').value;
+
+            if (!proteinSequence) {
+                e.preventDefault();
+                showError('Please enter a protein sequence');
+                document.getElementById('protein_sequence').focus();
+                return;
+            }
+
+            // Basic FASTA validation
+            if (!proteinSequence.includes('>') || !proteinSequence.match(/[ACDEFGHIKLMNPQRSTVWY]/i)) {
+                e.preventDefault();
+                showError('Please enter a valid FASTA format protein sequence');
+                document.getElementById('protein_sequence').focus();
+                return;
+            }
+
+            if (targetLength && (targetLength < 10 || targetLength > 1000)) {
+                e.preventDefault();
+                showError('Target length must be between 10 and 1000 amino acids');
+                document.getElementById('target_length').focus();
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.textContent = '⏳ Processing Protein...';
+            submitBtn.disabled = true;
+
+            // Show progress
+            document.getElementById('progressContainer').style.display = 'block';
+            updateProgress('Submitting protein for implementation...', 50);
+        });
+
+        // Error display
+        function showError(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-error';
+            alertDiv.innerHTML = `<strong>Error:</strong> ${message}`;
+            const container = document.querySelector('.container');
+            container.insertBefore(alertDiv, container.firstChild);
+            setTimeout(() => alertDiv.remove(), 5000);
+        }
+
+        // File upload feedback
+        document.getElementById('reference_files').addEventListener('change', function(e) {
+            const files = e.target.files;
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            if (files.length > 0) {
+                Array.from(files).forEach(file => {
+                    const li = document.createElement('li');
+                    li.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                    fileList.appendChild(li);
+                });
+                document.getElementById('fileFeedback').style.display = 'block';
+            } else {
+                document.getElementById('fileFeedback').style.display = 'none';
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                document.querySelector('.submit-btn').click();
+            }
+        });
+
+        // Real-time validation
+        document.getElementById('protein_sequence').addEventListener('input', function() {
+            const error = document.getElementById('sequenceError');
+            const sequence = this.value.trim();
+            if (sequence && (!sequence.includes('>') || !sequence.match(/[ACDEFGHIKLMNPQRSTVWY]/i))) {
+                error.style.display = 'block';
+                error.textContent = 'Please enter a valid FASTA format sequence';
+            } else {
+                error.style.display = 'none';
+            }
+        });
+
+        // Help tooltips
+        document.querySelectorAll('.help-icon').forEach(icon => {
+            icon.addEventListener('mouseover', function(e) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = this.dataset.tooltip;
+                document.body.appendChild(tooltip);
+                tooltip.style.left = e.pageX + 'px';
+                tooltip.style.top = (e.pageY - 30) + 'px';
+            });
+            icon.addEventListener('mouseout', function() {
+                document.querySelector('.tooltip')?.remove();
+            });
+        });
+
+        // Help modal
+        function showHelp() {
+            document.getElementById('helpModal').style.display = 'block';
+        }
+
+        function closeHelp() {
+            document.getElementById('helpModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('helpModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
