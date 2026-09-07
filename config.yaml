@@ -1,0 +1,158 @@
+computation:
+  batch_size: 16
+  max_sequences: 1000
+  num_workers: 4
+  random_seed: 42
+data_provenance:
+  ethical_compliance:
+    consent_obtained: true
+    data_usage_policy: Research and educational purposes only
+    gdpr_compliant: true
+    hipaa_compliant: false
+  sources:
+  - anonymized: true
+    license: CC BY 4.0
+    name: UniProt
+    type: public_database
+  - anonymized: true
+    license: PDB License
+    name: PDB
+    type: public_database
+  - anonymized: true
+    license: CC0
+    name: AlphaFold DB
+    type: public_database
+data_sources:
+  alphafold:
+    base_url: https://alphafold.ebi.ac.uk/files/
+    format: pdb
+  pdb:
+    base_url: https://files.rcsb.org/download/
+    format: pdb
+  uniprot:
+    base_url: https://rest.uniprot.org/uniprotkb/
+    format: fasta
+    erbb2_family_query_size: 300
+healthy_protein_reaction:
+  analysis_enabled: true
+  reaction_assays:
+  - binding_affinity_test
+  - immune_activation_test
+  - complement_activation_test
+  - cellular_cytotoxicity_test
+  safety_thresholds:
+    cross_reactivity_score_max: 0.1
+    hla_binding_threshold: 15.0
+    immune_activation_max: 0.05
+  target_healthy_proteins:
+  - name: Human_ACE2
+    reaction_type: cross_reactivity_check
+    uniprot_id: Q9BYF1
+  - name: Human_TCR
+    reaction_type: immune_response_check
+    uniprot_id: P01834
+  - name: Human_HLA
+    reaction_type: presentation_check
+    uniprot_id: P01889
+her2_comparison:
+  comparison_metrics:
+    binding_site_preservation: true
+    sequence_identity_threshold: 0.7
+    structure_similarity_threshold: 0.8
+  reference_protein:
+    name: HER2_standard
+    sequence: MELAALCRWGL LLLALLPPGI AASTQHKVKE LTLQDVSVMG LNLIIIFVLM GVLGIGNFRI HTRIGLKTLE
+      RHQLHTQRMH TLNCEANTPS GQGTARITCG ESGMTRIGSE DIIWVGTGYI LDSVPKRSNA QLLRILGLKR
+      VKRLGSSGCC AISTTGPLAQ VTGIELLQGD GRAFVSNVLA VKKVQ
+    uniprot_id: P04626
+logging:
+  backup_count: 5
+  file: pipeline.log
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  level: INFO
+  max_size: 10485760
+models:
+  sequence_generator:
+    discriminator_layers:
+    - 1024
+    - 512
+    - 256
+    - 128
+    gan_hidden_dim: 256
+    gan_latent_dim: 128
+    gan_layers:
+    - 128
+    - 256
+    - 512
+    - 1024
+    max_length: 512
+    model_path: models/progan/
+    name: ProGAN
+    temperature: 1.0
+    top_k: 50
+    top_p: 0.95
+  structure_predictor:
+    chunk_size: 128
+    device: cpu
+    model_path: models/esmfold/
+    name: ESMFold
+paths:
+  data:
+    processed: data/processed
+    raw: data/raw
+  datasets: datasets
+  models: models
+  notebooks: notebooks
+  results: results
+  scripts: scripts
+project:
+  author: AI Protein Design Team
+  description: End-to-end AI-powered therapeutic protein design pipeline
+  last_updated: '2026-01-30 12:33:33'
+  name: AI Protein Design Pipeline
+  version: 1.0.0
+quality:
+  docking_energy_threshold: -7.0
+  rmsd_threshold: 2.0
+  sequence_identity_threshold: 0.95
+  structure_confidence_threshold: 75.0
+reports:
+  include_plots: true
+  include_raw_data: false
+  output_format:
+  - pdf
+  - html
+  template: templates/report_template.docx
+reproducibility:
+  dependency_versions:
+    biopython: 1.79+
+    esm: 2.0.0+
+    torch: 1.12.0+
+  docker_image: ai-protein-design:v1.0.0
+  hardware_requirements:
+    gpu_required: false
+    min_ram: 8GB
+    recommended_gpu: CUDA-compatible GPU
+    recommended_ram: 16GB+
+  python_version: 3.8+
+  singularity_container: ai-protein-design_v1.0.0.sif
+validation:
+  baseline_models:
+  - ProGen
+  - ESM-1b
+  - Random
+  confidence_level: 0.95
+  cross_validation_folds: 5
+  enable_benchmarking: true
+  min_sample_size: 30
+  statistical_tests:
+  - t-test
+  - mann-whitney
+  - anova
+visualization:
+  colormap: viridis
+  dpi: 300
+  figsize:
+  - 10
+  - 8
+  style: default
